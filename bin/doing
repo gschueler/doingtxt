@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'doing/cli'
+
+Doing::CLI.start
