@@ -31,9 +31,9 @@ class Task
     def addMeta(key,value)
         @meta[key]=value
         case key
-            when "start","begin"
+            when /^(start|begin|time|at|in)$/i
                 self.start=Chronic.parse(value)
-            when "end","done",/finish(ed)?/,/completed?/
+            when /^(end|done|finish(ed)?|completed?|out)$/i
                 self.end=Chronic.parse(value)
         end
 
@@ -63,7 +63,7 @@ class Doing
                 entry = Task.new(s[1])
                 # entry[:title]=s[1]
                 @current=entry
-            elsif em=s.scan(/\s{0,2}[:~]\s(.+)$/) && lastline
+            elsif em=s.scan(/\s{0,2}[:~]\s+(.+)$/) && lastline
                 # definition
                 # if lastline
                     @current.addMeta(lastline,s[1])
