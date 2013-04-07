@@ -24,7 +24,7 @@ Finish work:
 
     doing done
 
-View tasks and durations:
+View tasks and durations (this is the default if you don't specify a subcommand):
 
     doing display
 
@@ -36,9 +36,9 @@ The default file is `~/.doing.txt`, and the format is Markdown, borrowing some s
 
     Any normal text within a header section is considered "notes" for the task.
 
-    You can add metadata with the Definition format from Pandoc.
+    You can add metadata with the Definition format from Pandoc:
 
-    Some Metadata Key
+    Data Key
     :  Data value
 
     Start and End times for the task can be defined simply by declaring those definitions:
@@ -48,7 +48,8 @@ The default file is `~/.doing.txt`, and the format is Markdown, borrowing some s
     End
     :  1:30pm
 
-    Synonyms for "Start" and "End" are: "begin","time","at" and "finish[ed]","complete[d]","done" respectively.
+
+Synonyms for "Start" and "End" are: "begin","time","at" and "finish[ed]","complete[d]","done" respectively.
 
 The formatting should be simple enough that you can integrate this text file with other text-based tools, like nvAlt, Dropbox, etc.  However if you use the `doing` commandline then the format will be handled for you.
 
