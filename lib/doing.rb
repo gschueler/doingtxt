@@ -98,9 +98,14 @@ class Doing
         @file=file
         self.parse(File.open(file))
     end
-    def display
+    def display(format)
         #print "tasks: %d" % @tasks.size
-        print Formatters::Table.new(@tasks).output
+        case format
+        when 'markdown'
+            print Formatters::Markdown.new(@tasks).output
+        else
+            print Formatters::Table.new(@tasks).output
+        end
     end
     def write
         File.open(@file, "w") { |io|  

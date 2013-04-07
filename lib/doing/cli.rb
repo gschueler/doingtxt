@@ -23,9 +23,11 @@ module Doing
                     if doing.append(text)
                         
                     end
+                when /text/
+                    doing.display 'markdown'
                 end
             else
-                doing.display
+                doing.display 'table'
             end
 
         end
