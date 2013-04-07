@@ -1,4 +1,8 @@
+require 'rubygems'
 require 'strscan'
+require 'chronic'
+require 'doing/formatters/markdown'
+require 'doing/formatters/table'
 
 # @author Greg Schueler
 module Doing
@@ -28,9 +32,9 @@ class Task
         @meta[key]=value
         case key
             when "start","begin"
-                self.start=value
+                self.start=Chronic.parse(value)
             when "end","done",/finish(ed)?/,/completed?/
-                self.end=value
+                self.end=Chronic.parse(value)
         end
 
     end
@@ -38,42 +42,38 @@ end
 
 class Doing
     attr_accessor :tasks
+    attr_accessor :current
     def parse(io)
-        items=[]
         item=nil#{:entries=>[],:lines=>[], :meta=>{}}
         entry=nil
         lastline=nil
-        curitem=nil
+        @current=nil
         io.each do |line|
             s = StringScanner.new(line)
-            if em=s.scan(/#\s+(.+)$/)
+            if em=s.scan(/#+\s+(.+)$/)
                 # an item
-                if item && item.tasks.size > 0
-                    if entry && entry.lines.size > 0
-                        item.addTask(entry)
-                        entry=nil#{:lines=>[], :meta=>{}}
-                    end
-                    items << item
+                if item 
+                    @tasks << item
                     item=nil#{:lines=>[], :meta=>{}}
                 end
                 item= Task.new(s[1])#[:task]=s[1]
-                curitem=item
+                @current=item
             elsif em=s.scan(/##\s+(.+)$/)
                 # entry
                 entry = Task.new(s[1])
                 # entry[:title]=s[1]
-                curitem=entry
+                @current=entry
             elsif em=s.scan(/\s{0,2}[:~]\s(.+)$/) && lastline
                 # definition
                 # if lastline
-                    curitem.addMeta(lastline,s[1])
+                    @current.addMeta(lastline,s[1])
                     lastline=nil
                 # end
             else
                 # text line
                 if lastline && lastline.size >0
                     # append line to current item
-                    curitem.lines<<lastline
+                    @current.lines<<lastline
                 end
                 lastline=line.strip
             end
@@ -81,7 +81,7 @@ class Doing
         # text line
         if lastline && lastline.size >0
             # append line to current item
-            curitem.lines<<lastline
+            @current.lines<<lastline
         end
         #cleanup
         if item #&& item.tasks.size
@@ -89,15 +89,63 @@ class Doing
                 item.addTask(entry)
                 entry=nil#{:lines=>[], :meta=>{}}
             end
-            items << item
+            @tasks << item
             item=nil#{:lines=>[], :meta=>{}}
         end
-
-        @tasks=items
     end
-    def display(file)
+    def initialize(file)
+        @tasks=[]
+        @file=file
         self.parse(File.open(file))
-        print self.tasks.inspect
+    end
+    def display
+        #print "tasks: %d" % @tasks.size
+        print Formatters::Table.new(@tasks).output
+    end
+    def write
+        File.open(@file, "w") { |io|  
+            io.write Formatters::Markdown.new(@tasks).output
+        }
+    end
+    def startTask(title,at=nil)
+        task = Task.new(title)
+        task.addMeta('start',at ? at : Time.now.to_s)
+        
+        # check if current task is open
+        if tasks.size > 0 && !tasks[-1].end
+            print "Already doing something: #{tasks[-1].title}\n"
+            return false
+        end
+
+        @tasks<<task
+        self.display
+        self.write
+        return true
+    end
+    def endTask(at=nil)
+        task=tasks[-1]
+        # check if current task is open
+        if task.end
+            print "Not doing anything\n"
+            return false
+        end
+        task.addMeta('end',at ? at : Time.now.to_s)
+
+        self.display
+        self.write
+        return true
+    end
+
+    def append(text,index=-1)
+        task=@tasks.size ? @tasks[index] : nil
+        if !task
+            print "No task found\n"
+            return false
+        end
+        task.lines<<text
+        self.display
+        self.write
+        return true
     end
 end
 end
