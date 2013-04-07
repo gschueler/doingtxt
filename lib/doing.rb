@@ -42,55 +42,50 @@ end
 
 class Doing
     attr_accessor :tasks
-    attr_accessor :current
     def parse(io)
-        item=nil#{:entries=>[],:lines=>[], :meta=>{}}
+        item=nil
         entry=nil
         lastline=nil
-        @current=nil
+        current=nil
+        header=false
         io.each do |line|
             s = StringScanner.new(line)
-            if em=s.scan(/#+\s+(.+)$/)
+            if !lastline.nil?
+                current.lines<<lastline
+                lastline=nil
+            end
+            if em=s.scan(/#\s+(.+)$/)
                 # an item
-                if item 
-                    @tasks << item
-                    item=nil#{:lines=>[], :meta=>{}}
-                end
-                item= Task.new(s[1])#[:task]=s[1]
-                @current=item
-            elsif em=s.scan(/##\s+(.+)$/)
-                # entry
-                entry = Task.new(s[1])
-                # entry[:title]=s[1]
-                @current=entry
-            elsif em=s.scan(/\s{0,2}[:~]\s+(.+)$/) && lastline
-                # definition
-                # if lastline
-                    @current.addMeta(lastline,s[1])
-                    lastline=nil
-                # end
+                @tasks << item if item
+                item= Task.new(s[1])
+                current=item
+                header=true
+            elsif em=s.scan(/^#{3}#*\s*$/) && current.lines[-1]
+                # an item
+                @tasks << item if item
+                item= Task.new(current.lines.pop)
+                current=item
+                header=true
+            elsif em=s.scan(/\s{0,2}[:~]\s+(.+)$/) && current.lines[-1]
+                current.addMeta(current.lines.pop,s[1])
+                lastline=nil
+                header=true
             else
-                # text line
-                if lastline && lastline.size >0
-                    # append line to current item
-                    @current.lines<<lastline
+                tline=line.strip
+                if !header || tline!=""
+                    lastline=tline
                 end
-                lastline=line.strip
+                header=false
             end
         end
-        # text line
-        if lastline && lastline.size >0
-            # append line to current item
-            @current.lines<<lastline
+        if !lastline.nil?
+            current.lines<<lastline
         end
-        #cleanup
-        if item #&& item.tasks.size
+        if item
             if entry && entry.lines.size
                 item.addTask(entry)
-                entry=nil#{:lines=>[], :meta=>{}}
             end
             @tasks << item
-            item=nil#{:lines=>[], :meta=>{}}
         end
     end
     def initialize(file)
@@ -98,7 +93,7 @@ class Doing
         @file=file
         self.parse(File.open(file))
     end
-    def display(format)
+    def display(format=nil)
         #print "tasks: %d" % @tasks.size
         case format
         when 'markdown'

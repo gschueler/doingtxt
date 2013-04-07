@@ -14,9 +14,9 @@ module Doing
                     end
                     @output<<"\n"
                 end
-                if task.lines.size
+                if task.lines.size > 0
                     @output<<task.lines.join("\n")
-                    @output<<"\n\n"
+                    @output<<"\n"
                 end
                 task.tasks.each { |t|
                     self.task_out(lvl+1,t)
