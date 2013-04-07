@@ -147,6 +147,21 @@ class Doing
         self.write
         return true
     end
+
+    #
+    # Add a metadata value to the last entry
+    # 
+    def addMeta(key,value,index=-1)
+        task=@tasks.size ? @tasks[index] : nil
+        if !task
+            print "No task found\n"
+            return false
+        end
+        task.addMeta(key,value)
+        self.display
+        self.write
+        return true
+    end
 end
 end
 

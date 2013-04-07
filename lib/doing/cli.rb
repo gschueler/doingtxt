@@ -29,6 +29,17 @@ module Doing
                     # open in $EDITOR
                     exec ENV['EDITOR'], @@default_file if ENV['EDITOR']
                     print "$EDITOR is not defined.\nCurrent file: %s\n" % @@default_file
+                when /^m(eta)?$/
+                    # Add metadata to the latest entry
+                    key=nil
+                    ARGV[1...ARGV.size].each { |arg| 
+                        s = StringScanner.new(arg)
+                        if em=s.scan(/^(.+)[=:](.+)$/)
+                            if !doing.addMeta(s[1],s[2]) 
+                                break
+                            end
+                        end
+                    }
                 end
             else
                 doing.display 'table'
