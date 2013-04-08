@@ -22,6 +22,7 @@ class Task
         @lines=[]
         @meta={}
         @parent=nil
+        @reparse_end=nil
     end
 
     def addTask(task)
@@ -33,8 +34,17 @@ class Task
         case key
             when /^(start|begin|time|at|in)$/i
                 self.start=Chronic.parse(value)
+                if @reparse_end
+                    self.end=Chronic.parse(@meta[@reparse_end],:now => self.start)
+                    @reparse_end=nil
+                end
             when /^(end|done|finish(ed)?|completed?|out)$/i
-                self.end=Chronic.parse(value)
+                if self.start
+                    self.end=Chronic.parse(value,:now => self.start)
+                else
+                    @reparse_end=key
+                    self.end=Chronic.parse(value)
+                end
             when /^(title|task)$/i
                 self.title=value
                 @meta.delete(key)
