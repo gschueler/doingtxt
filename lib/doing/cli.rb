@@ -38,8 +38,17 @@ module Doing
                             if !doing.addMeta(s[1],s[2]) 
                                 break
                             end
+                        elsif em=s.scan(/^(.+)[=:]\s*$/)
+                            key=s[1]
+                        elsif key
+                            if !doing.addMeta(key,arg) 
+                                break
+                            end
                         end
                     }
+                when /^r(esume)?$/
+                    # resume previous task if finished
+                    doing.resumeTask
                 end
             else
                 doing.display 'table'

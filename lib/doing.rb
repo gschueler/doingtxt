@@ -35,6 +35,9 @@ class Task
                 self.start=Chronic.parse(value)
             when /^(end|done|finish(ed)?|completed?|out)$/i
                 self.end=Chronic.parse(value)
+            when /^(title|task)$/i
+                self.title=value
+                @meta.delete(key)
         end
 
     end
@@ -161,6 +164,17 @@ class Doing
         self.display
         self.write
         return true
+    end
+    #
+    # Resume a task by starting a new task with the title of a previous one
+    # 
+    def resumeTask(index=-1)
+        task=@tasks.size ? @tasks[index] : nil
+        if !task
+            print "No task found\n"
+            return false
+        end
+        self.startTask(task.title)
     end
 end
 end
