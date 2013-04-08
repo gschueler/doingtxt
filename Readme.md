@@ -6,6 +6,16 @@ Time and task tracking in [Markdown][] format, inspired by [todo.txt][] and [Tim
 [todo.txt]: http://www.todotxt.com/
 [Timetrap]: https://github.com/samg/timetrap
 
+Allows you to do time tracking of what you are doing, and records it in a Markdown formatted text file.
+
+Using a simple text format allows you to with other text-based tools, like nvAlt, Dropbox, etc.
+
+Goals:
+
+* Most of the features of Timetrap, via commandline interface
+* Simple text format with natural-language time/date
+* Store my files in Dropbox, using nvAlt and Simplenote (iOS) to do any on-the-go changes.
+
 ## Install
 
     gem install doing
@@ -54,8 +64,6 @@ list items to be above any other text content, so treat them only as metadata.
     definitions.
 
 Synonyms for "Start" and "End" are: "begin","time","at" and "finish[ed]","complete[d]","done" respectively.
-
-The formatting should be simple enough that you can integrate this text file with other text-based tools, like nvAlt, Dropbox, etc.
 
 ## Display formats
 
