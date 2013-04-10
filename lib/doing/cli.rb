@@ -32,6 +32,21 @@ module Doing
             end
             Doing.new(file)
         end
+        def self.parseMetaArgs
+            vals = {}
+            key=nil
+            ARGV[1...ARGV.size].each { |arg| 
+                s = StringScanner.new(arg)
+                if !key && em=s.scan(/^(.+?)[=:](.+)$/)
+                    vals[s[1]]=s[2]
+                elsif em=s.scan(/^(.+?)[=:]\s*$/)
+                    key=s[1]
+                elsif key
+                    vals[key]=arg
+                end
+            }
+            vals
+        end
         def self.start
             file=@@default_file
             file_key=nil
@@ -77,45 +92,31 @@ module Doing
                     print "$EDITOR is not defined.\nCurrent file: %s\n" % @@default_file
                 when /^m(eta)?$/
                     # Add metadata to the latest entry
-                    key=nil
-                    ARGV[1...ARGV.size].each { |arg| 
-                        s = StringScanner.new(arg)
-                        if em=s.scan(/^(.+)[=:](.+)$/)
-                            if !doing.addMeta(s[1],s[2]) 
-                                break
-                            end
-                        elsif em=s.scan(/^(.+)[=:]\s*$/)
-                            key=s[1]
-                        elsif key
-                            if !doing.addMeta(key,arg) 
-                                break
-                            end
+                    meta=self.parseMetaArgs
+                    meta.each_key { |key|  
+                        if !doing.addMeta(key,meta[key]) 
+                            break
                         end
                     }
+                    
                 when /^r(esume)?$/
                     # resume previous task if finished
                     doing.resumeTask
-                when /^s(witch)?$/
-                    # switch to another worksheet, or 'default' to mean default
+                when /^f(ile)?$/
+                    # switch to another file, or 'default' to mean default
                     key=ARGV[1]
                     key="" if key=="default"
                     config.addMeta('file_key',key) 
                     print "Switched to Worksheet: %s\n" % (key!="" ? key : "Default")
                 when /^c(onfig)?$/
-                    ARGV[1...ARGV.size].each { |arg| 
-                        s = StringScanner.new(arg)
-                        if em=s.scan(/^(.+)[=:](.+)$/)
-                            if !config.addMeta(s[1],s[2]) 
-                                break
-                            end
-                        elsif em=s.scan(/^(.+)[=:]\s*$/)
-                            key=s[1]
-                        elsif key
-                            if !config.addMeta(key,arg) 
-                                break
-                            end
+                    
+                    meta=self.parseMetaArgs
+                    meta.each_key { |key|  
+                        if !config.addMeta(key,meta[key]) 
+                            break
                         end
                     }
+                    
                 end
             else
                 if file_key
