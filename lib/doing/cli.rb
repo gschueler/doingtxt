@@ -2,10 +2,17 @@ require 'doing'
 
 module Doing
     class CLI
-        @@default_file_name='.doing'
-        @@default_file=File.join(ENV['HOME'], "#{@@default_file_name}.txt")
-        @@config_file=File.join(ENV['HOME'], '.doing.config')
+        @@default_file_name='doing'
+        @@default_dir=File.join(ENV['HOME'],'.doing')
+        @@default_file=File.join(@@default_dir, "#{@@default_file_name}.txt")
+        @@config_file=File.join(@@default_dir, '.doing.config')
+        attr_accessor :data_dir
         def self.config
+            # create config dir if it doesn't exist
+            if !File.directory?(@@default_dir)
+                Dir.mkdir(@@default_dir)
+            end
+
             # write new config file if it doesn't exist
             config=Doing.new(@@config_file) if File.exist?(@@config_file)
             if !File.exist?(@@config_file)
@@ -19,6 +26,7 @@ module Doing
         end
         def self.sheet(file)
             if !File.exist?(file)
+                print "Starting new file: #{file}\n"
                 File.open(file, "w") { |io|  
                 }
             end
@@ -27,14 +35,19 @@ module Doing
         def self.start
             file=@@default_file
             file_key=nil
+            file_dir=nil
 
             # hack until using yaml or something: use markdown metadata
             config=self.config
             if config && config.tasks && config.tasks[0]
+                file_dir=config.tasks[0].meta["file_dir"]
+                if !file_dir || file_dir==''
+                    file_dir=@@default_dir
+                end
                 file_key=config.tasks[0].meta["file_key"]
                 file_key.strip! if file_key
                 if file_key && file_key!=''
-                    file=File.join(ENV['HOME'], "#{@@default_file_name}.#{file_key}.txt")
+                    file=File.join(file_dir, "#{@@default_file_name}.#{file_key}.txt")
                 end
             end
             doing=self.sheet(file)
