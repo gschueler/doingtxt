@@ -25,6 +25,12 @@ class Task
         @reparse_end=nil
     end
 
+    def duration
+        duration=(self.end.to_i-self.start.to_i) if self.end
+        duration=(Time.now.to_i-self.start.to_i) unless self.end
+        duration
+    end
+
     def addTask(task)
         self.tasks<<task
         task.parent=self

@@ -4,12 +4,7 @@ module Doing
             @@format="%-10s %-10s %-10s %-10s %-10s\n"
             attr_reader :output
             def format_day(time)
-                d=time.strftime("%a %b %d")
-                if d!=@lastday
-                    @lastday=d
-                else
-                    ""
-                end
+                time.strftime("%a %b %d")
             end
             def format_time(time)
                 time.strftime("%I:%M%p") if time
@@ -26,17 +21,20 @@ module Doing
                 ]
             end
             def task_out (lvl,task)
-                # @output<<"#"*lvl
-                # @output<<" #{task.title}\n"
+                d=format_day(task.start)
+                if d!=@lastday
+                    @lastday=d
+                else
+                    d=""
+                end
                 @output << @@format % [
-                    format_day(task.start),
+                    d,
                     format_time(task.start),
                     format_time(task.end),
-                    format_duration(task.start,task.end),
+                    format_duration_secs(task.duration),
                     task.title
                 ]
-                @totaltime+=(task.end.to_i-task.start.to_i) if task.end
-                @totaltime+=(Time.now.to_i-task.start.to_i) unless task.end
+                @totaltime+=task.duration
                 
                 task.tasks.each { |t|
                     self.task_out(lvl+1,t)
@@ -44,11 +42,23 @@ module Doing
             end
             def initialize(tasks)
                 @totaltime=0
+                @daytime=0
                 @output=[]
+                multiDay=false
                 @output << @@format % %w{Day Start End Duration Task}
                 tasks.each do |task|
+                    curday=@lastday
                     task_out(1,task)
+                    if curday!=@lastday && curday
+                        t=@output[-1]
+                        @output[-1] = @@format % ["","","",format_duration_secs(@daytime),""]
+                        @output << t
+                        @daytime=0
+                        multiDay=true
+                    end
+                    @daytime+=task.duration
                 end
+                @output<< @@format % ["","","",format_duration_secs(@daytime),""] if multiDay
                 @output << "\n"
 
                 @output << @@format % ["Total","","",format_duration_secs(@totaltime),""]
