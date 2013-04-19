@@ -77,7 +77,8 @@ module Doing
                     end
                 when /^(o(ut)?|done|end)$/
                     if doing.endTask
-                        print "Finished task: #{title} at #{Time.now}\n"
+                        lasttitle=doing.tasks[-1].title
+                        print "Finished task #{lasttitle} at #{Time.now}\n"
                     end
                 when /^a(ppend|dd)$/
                     text=ARGV[1...ARGV.size].join(" ")
@@ -88,8 +89,8 @@ module Doing
                     doing.display 'markdown'
                 when /^e(dit)?$/
                     # open in $EDITOR
-                    exec ENV['EDITOR'], @@default_file if ENV['EDITOR']
-                    print "$EDITOR is not defined.\nCurrent file: %s\n" % @@default_file
+                    exec ENV['EDITOR'], file if ENV['EDITOR']
+                    print "$EDITOR is not defined.\nCurrent file: %s\n" % file
                 when /^m(eta)?$/
                     # Add metadata to the latest entry
                     meta=self.parseMetaArgs
@@ -101,7 +102,22 @@ module Doing
                     
                 when /^r(esume)?$/
                     # resume previous task if finished
-                    doing.resumeTask
+                    index=-1
+                    if ARGV.size > 1
+                        index = ARGV[1].to_i
+                    end
+                    doing.resumeTask index
+                when /^split$/
+                    # finish previous task and start a new one right now
+                    title=ARGV[1...ARGV.size].join(" ")
+                    if doing.endTask
+                        lasttitle=doing.tasks[-1].title
+                        print "Finished task #{lasttitle} at #{Time.now}\n"
+                        #print "title is #{title}"
+                        if doing.startTask(title)
+                            print "Started task: #{title} at #{Time.now}\n"
+                        end
+                    end
                 when /^f(ile)?$/
                     # switch to another file, or 'default' to mean default
                     key=ARGV[1]
