@@ -90,6 +90,7 @@ module Doing
                 when /^e(dit)?$/
                     # open in $EDITOR
                     exec ENV['EDITOR'], file if ENV['EDITOR']
+                    exec ARGV[1],file if ARGV.size > 1
                     print "$EDITOR is not defined.\nCurrent file: %s\n" % file
                 when /^m(eta)?$/
                     # Add metadata to the latest entry
