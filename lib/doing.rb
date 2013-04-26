@@ -3,6 +3,7 @@ require 'strscan'
 require 'chronic'
 require 'doing/formatters/markdown'
 require 'doing/formatters/table'
+require 'doing/formatters/status'
 
 # @author Greg Schueler
 module Doing
@@ -117,6 +118,8 @@ class Doing
         case format
         when 'markdown'
             print Formatters::Markdown.new(@tasks).output
+        when 'status'
+            print Formatters::Status.new(@tasks).output
         else
             print Formatters::Table.new(@tasks).output
         end
@@ -161,6 +164,10 @@ class Doing
             print "No task found\n"
             return false
         end
+        time=Time.now.strftime("%I:%M%p")
+        task.lines<<''
+        task.lines<<'## At '+time
+        task.lines<<''
         task.lines<<text
         self.display
         self.write

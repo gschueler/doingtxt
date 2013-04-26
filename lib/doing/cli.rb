@@ -87,6 +87,8 @@ module Doing
                     end
                 when /^t(ext)?$/
                     doing.display 'markdown'
+                when /^stat(us)?$/
+                    doing.display 'status'
                 when /^e(dit)?$/
                     # open in $EDITOR
                     exec ENV['EDITOR'], file if ENV['EDITOR']
