@@ -17,6 +17,7 @@ class Task
     attr_accessor :parent
     attr_accessor :start
     attr_accessor :end
+    attr_accessor :project
     def initialize(title)
         @title=title
         @tasks=[]
@@ -129,9 +130,29 @@ class Doing
             io.write Formatters::Markdown.new(@tasks).output
         }
     end
+    def parseTitle(title)
+        tokens=title.split
+        meta={}
+        newtitle=[]
+        tokens.each do |tok|
+            if tok.start_with?"+"
+                meta['project']=tok.slice(1..-1)
+                newtitle<<tok
+            elsif tok.start_with?"@"
+                meta['start']=Chronic.parse(tok.slice(1..-1)).to_s
+            else
+                newtitle<<tok
+            end
+        end
+        return {:title=>newtitle.join(" "),:meta=>meta}
+    end
     def startTask(title,at=nil)
-        task = Task.new(title)
+        parsed=self.parseTitle(title)
+        task = Task.new(parsed[:title])
         task.addMeta('start',at ? at : Time.now.to_s)
+        parsed[:meta].each do |k,v|
+            task.addMeta(k,v)
+        end
         
         # check if current task is open
         if tasks.size > 0 && !tasks[-1].end

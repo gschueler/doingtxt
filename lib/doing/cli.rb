@@ -76,9 +76,15 @@ module Doing
                         print "Started task: #{title} at #{Time.now}\n"
                     end
                 when /^(o(ut)?|done|end)$/
-                    if doing.endTask
+                    at=Time.now.to_s
+                    text=ARGV[1...ARGV.size].join(" ")
+                    parsed=doing.parseTitle(text) #look for @time
+                    if parsed[:meta]['start']
+                        at=parsed[:meta]['start']
+                    end
+                    if doing.endTask(at)
                         lasttitle=doing.tasks[-1].title
-                        print "Finished task #{lasttitle} at #{Time.now}\n"
+                        print "Finished task #{lasttitle} at #{at}\n"
                     end
                 when /^a(ppend|dd)$/
                     text=ARGV[1...ARGV.size].join(" ")
