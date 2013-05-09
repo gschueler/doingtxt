@@ -161,7 +161,6 @@ class Doing
         end
 
         @tasks<<task
-        self.display
         self.write
         return true
     end
@@ -174,7 +173,6 @@ class Doing
         end
         task.addMeta('end',at ? at : Time.now.to_s)
 
-        self.display
         self.write
         return true
     end
@@ -190,7 +188,6 @@ class Doing
         task.lines<<'## At '+time
         task.lines<<''
         task.lines<<text
-        self.display
         self.write
         return true
     end
@@ -205,7 +202,6 @@ class Doing
             return false
         end
         task.addMeta(key,value)
-        self.display
         self.write
         return true
     end

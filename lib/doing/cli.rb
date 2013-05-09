@@ -73,7 +73,7 @@ module Doing
                     title=ARGV[1...ARGV.size].join(" ")
                     #print "title is #{title}"
                     if doing.startTask(title)
-                        print "Started task: #{title} at #{Time.now}\n"
+                        print "Started task: #{doing.tasks[-1].title} at #{doing.tasks[-1].start}\n"
                     end
                 when /^(o(ut)?|done|end)$/
                     at=Time.now.to_s
@@ -86,10 +86,10 @@ module Doing
                         lasttitle=doing.tasks[-1].title
                         print "Finished task #{lasttitle} at #{at}\n"
                     end
-                when /^a(ppend|dd)$/
+                when /^(a(ppend|dd)|log)$/
                     text=ARGV[1...ARGV.size].join(" ")
                     if doing.append(text)
-                        
+                        doing.display 'status'
                     end
                 when /^t(ext)?$/
                     doing.display 'markdown'
@@ -108,6 +108,7 @@ module Doing
                             break
                         end
                     }
+                    doing.display 'status'
                     
                 when /^r(esume)?$/
                     # resume previous task if finished
@@ -116,6 +117,7 @@ module Doing
                         index = ARGV[1].to_i
                     end
                     doing.resumeTask index
+                    doing.display 'status'
                 when /^split$/
                     # finish previous task and start a new one right now
                     title=ARGV[1...ARGV.size].join(" ")
@@ -141,7 +143,8 @@ module Doing
                             break
                         end
                     }
-                    
+                else
+                    print "doing: Unrecognized action #{ARGV[0]}\n"
                 end
             else
                 if file_key
