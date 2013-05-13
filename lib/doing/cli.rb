@@ -121,12 +121,17 @@ module Doing
                 when /^split$/
                     # finish previous task and start a new one right now
                     title=ARGV[1...ARGV.size].join(" ")
-                    if doing.endTask
+                    at=Time.now.to_s
+                    parsed=doing.parseTitle(title) #look for @time
+                    if parsed[:meta]['start']
+                        at=parsed[:meta]['start']
+                    end
+                    if doing.endTask(at)
                         lasttitle=doing.tasks[-1].title
-                        print "Finished task #{lasttitle} at #{Time.now}\n"
+                        print "Finished task #{lasttitle} at #{at}\n"
                         #print "title is #{title}"
                         if doing.startTask(title)
-                            print "Started task: #{title} at #{Time.now}\n"
+                            print "Started task: #{title} at #{at}\n"
                         end
                     end
                 when /^f(ile)?$/
