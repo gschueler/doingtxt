@@ -41,7 +41,7 @@ class Task
         @meta[key]=value
         case key
             when /^(start|begin|time|at|in)$/i
-                self.start=Chronic.parse(value)
+                self.start=Chronic.parse(value, :context => :past)
                 if @reparse_end
                     self.end=Chronic.parse(@meta[@reparse_end],:now => self.start)
                     @reparse_end=nil
@@ -51,7 +51,7 @@ class Task
                     self.end=Chronic.parse(value,:now => self.start)
                 else
                     @reparse_end=key
-                    self.end=Chronic.parse(value)
+                    self.end=Chronic.parse(value, :context => :past)
                 end
             when /^(title|task)$/i
                 self.title=value
