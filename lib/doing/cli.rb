@@ -134,6 +134,19 @@ module Doing
                             print "Started task: #{title} at #{at}\n"
                         end
                     end
+                when /^f(ilter|ind)$/
+                    # finish previous task and start a new one right now
+                    title=ARGV[1...ARGV.size].join(" ")
+                    after=nil
+                    parsed=doing.parseTitle(title) #look for @time
+                    if parsed[:meta]['start']
+                        after=parsed[:meta]['start']
+                    end
+                    proj=nil
+                    if parsed[:meta]['project']
+                        proj=parsed[:meta]['project']
+                    end
+                    doing.filter(after,proj,title,'table')
                 when /^f(ile)?$/
                     # switch to another file, or 'default' to mean default
                     key=ARGV[1]

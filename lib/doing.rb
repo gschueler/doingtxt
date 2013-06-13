@@ -56,6 +56,8 @@ class Task
             when /^(title|task)$/i
                 self.title=value
                 @meta.delete(key)
+            when /^project$/i
+                self.project=value
         end
 
     end
@@ -114,15 +116,15 @@ class Doing
         @file=file
         self.parse(File.open(file))
     end
-    def display(format=nil)
+    def display(format=nil,tasks=@tasks)
         #print "tasks: %d" % @tasks.size
         case format
         when 'markdown'
-            print Formatters::Markdown.new(@tasks).output
+            print Formatters::Markdown.new(tasks).output
         when 'status'
-            print Formatters::Status.new(@tasks).output
+            print Formatters::Status.new(tasks).output
         else
-            print Formatters::Table.new(@tasks).output
+            print Formatters::Table.new(tasks).output
         end
     end
     def write
@@ -176,6 +178,18 @@ class Doing
         self.write
         return true
     end
+    def filter(after=nil,project=nil,title=nil,format=nil)
+        print "filter #{after} #{project} #{title}\n"
+        tasks = self.tasks.find_all { |e|
+            
+            e.project==project
+        }
+        #.find_all{ |e|
+            # print "#{e.title} ==? #{title} #{e.title==title}\n"
+         #   e.title==title
+        #}
+        self.display format,tasks
+    end
 
     def append(text,index=-1)
         task=@tasks.size ? @tasks[index] : nil
@@ -184,8 +198,9 @@ class Doing
             return false
         end
         time=Time.now.strftime("%I:%M%p")
+        date=Time.now.strftime("%a %b %d")
         task.lines<<''
-        task.lines<<'## At '+time
+        task.lines<<'## At '+time+", on "+date
         task.lines<<''
         task.lines<<text
         self.write
