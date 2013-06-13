@@ -136,17 +136,20 @@ class Doing
         tokens=title.split
         meta={}
         newtitle=[]
+        text=[]
         tokens.each do |tok|
             if tok.start_with?"+"
                 meta['project']=tok.slice(1..-1)
                 newtitle<<tok
             elsif tok.start_with?"@"
                 meta['start']=Chronic.parse(tok.slice(1..-1)).to_s
+                meta['start_time']=Chronic.parse(tok.slice(1..-1))
             else
                 newtitle<<tok
+                text<<tok
             end
         end
-        return {:title=>newtitle.join(" "),:meta=>meta}
+        return {:title=>newtitle.join(" "),:text=>text.join(" "),:meta=>meta}
     end
     def startTask(title,at=nil)
         parsed=self.parseTitle(title)
@@ -181,13 +184,12 @@ class Doing
     def filter(after=nil,project=nil,title=nil,format=nil)
         print "filter #{after} #{project} #{title}\n"
         tasks = self.tasks.find_all { |e|
-            
-            e.project==project
+            project.nil? || project=="" || e.project==project
+        }.find_all{ |e|
+           title.nil? || title=="" || e.title=~/#{title}/
+        }.find_all{ |e|
+           after.nil? || ( ( after <=> e.start ) < 0 )
         }
-        #.find_all{ |e|
-            # print "#{e.title} ==? #{title} #{e.title==title}\n"
-         #   e.title==title
-        #}
         self.display format,tasks
     end
 

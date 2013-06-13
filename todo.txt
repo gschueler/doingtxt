@@ -1,1 +1,4 @@
-- [x] update "append", add date to header- [x] add "filter" command, to reduce list by project - [ ] filter should partial match title, and show pertinent summary
+- [x] update "append", add date to header
+- [x] add "filter" command, to reduce list by project 
+- [x] filter should partial match title, and date start
+- [ ] filter should show pertinent summary
