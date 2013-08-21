@@ -128,12 +128,17 @@ class Doing
         end
     end
     def write
-        File.open(@file, "w") { |io|  
-            io.write Formatters::Markdown.new(@tasks).output
+        self.writeTo(@tasks,@file)
+    end
+    def writeTo(tasks,file)
+        File.open(file, "w") { |io|  
+            io.write Formatters::Markdown.new(tasks).output
         }
     end
     def parseTitle(title)
-        tokens=title.split
+        return self.parseTitleTokens title.split
+    end
+    def parseTitleTokens(tokens)
         meta={}
         newtitle=[]
         text=[]
@@ -181,16 +186,27 @@ class Doing
         self.write
         return true
     end
-    def filter(after=nil,project=nil,title=nil,format=nil)
-        print "filter #{after} #{project} #{title}\n"
+    def filter(before=nil,after=nil,project=nil,title=nil,format=nil)
+        print "filter #{before} #{after} #{project} #{title}\n"
+        tasks=self.filterTasks(before,after,project,title)
+        self.display format,tasks
+    end
+    def filterTasks(before=nil,after=nil,project=nil,title=nil)
         tasks = self.tasks.find_all { |e|
             project.nil? || project=="" || e.project==project
         }.find_all{ |e|
            title.nil? || title=="" || e.title=~/#{title}/
         }.find_all{ |e|
-           after.nil? || ( ( after <=> e.start ) < 0 )
+           before.nil? || ( ( before <=> e.end ) > 0 )
+        }.find_all{ |e|
+           after.nil? || ( ( after <=> e.end ) <= 0 )
         }
-        self.display format,tasks
+        return tasks
+    end
+    def filterTo(before=nil,after=nil,project=nil,title=nil)
+        tasks = self.filterTasks(before,after,project,title)
+        @tasks=tasks
+        self.write
     end
 
     def append(text,index=-1)
