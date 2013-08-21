@@ -95,6 +95,8 @@ module Doing
                     doing.display 'markdown'
                 when /^stat(us)?$/
                     doing.display 'status'
+                when /^(to)?day$/
+                    doing.display 'day'
                 when /^e(dit)?$/
                     # open in $EDITOR
                     exec ENV['EDITOR'], file if ENV['EDITOR']

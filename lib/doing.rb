@@ -4,6 +4,7 @@ require 'chronic'
 require 'doing/formatters/markdown'
 require 'doing/formatters/table'
 require 'doing/formatters/status'
+require 'doing/formatters/day'
 
 # @author Greg Schueler
 module Doing
@@ -123,6 +124,8 @@ class Doing
             print Formatters::Markdown.new(tasks).output
         when 'status'
             print Formatters::Status.new(tasks).output
+        when 'day'
+            print Formatters::Day.new(tasks).output
         else
             print Formatters::Table.new(tasks).output
         end
