@@ -146,7 +146,7 @@ module Doing
                     if parsed[:meta]['project']
                         proj=parsed[:meta]['project']
                     end
-                    doing.filter(after,proj,parsed[:text],'table')
+                    doing.filter(nil,after,proj,parsed[:text],'table')
                 when /^f(ile)?$/
                     # switch to another file, or 'default' to mean default
                     key=ARGV[1]
@@ -161,6 +161,41 @@ module Doing
                             break
                         end
                     }
+                when /^archive$/
+                    # Archive all logs before the filtered time into a file named from the filter
+                    before=nil
+                    parsed=doing.parseTitleTokens(ARGV[1...ARGV.size]) #look for @time
+                    if parsed[:meta]['start_time']
+                        before=parsed[:meta]['start_time']
+                    end
+                    dname = ARGV[1..ARGV.size].find { |key| key.start_with?"@"}
+                    if !before
+                        print "Unable to determine archive date from: %s\n" % dname
+                        return
+                    end
+                    
+                    fname=dname
+                    if file_key
+                        fname = "#{file_key}.#{dname}"
+                    end
+                    newfile=File.join(file_dir, "#{@@default_file_name}.#{fname}.txt")
+                    
+                    tasks=doing.filterTasks(before)
+                    if tasks.size
+                        
+                        doing.writeTo(tasks,newfile)
+                        
+                        print "Archiving tasks before %s\n" % [before]
+                        print "Archived %s tasks to: %s\n" % [tasks.size, newfile]
+
+                        #truncate current taskset
+                        doing.filterTo(nil,before)
+                        
+                        print "Truncated worksheet %s\n" % [file_key]
+                    else
+                        print "No tasks matching filter: %s\n" % [dname]
+                    end
+
                 else
                     print "doing: Unrecognized action #{ARGV[0]}\n"
                 end
