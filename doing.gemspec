@@ -15,7 +15,8 @@ Gem::Specification.new do |s|
     "lib/doing/formatters.rb",
     "lib/doing/formatters/markdown.rb",
     "lib/doing/formatters/table.rb",
-    "lib/doing/formatters/status.rb"
+    "lib/doing/formatters/status.rb",
+    "lib/doing/formatters/day.rb"
   ]
 
   s.requirements << 'chronic'
