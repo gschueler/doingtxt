@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Doingtxt by gschueler</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Doingtxt</h1>
+        <p class="header">textual time tracking</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/gschueler/doingtxt/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/gschueler/doingtxt/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/gschueler/doingtxt">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/gschueler">gschueler</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="doingtxt" class="anchor" href="#doingtxt"><span class="octicon octicon-link"></span></a>Doing.txt</h1>
+
+<p>Time and task tracking in <a href="http://daringfireball.net/projects/markdown/">Markdown</a> format, inspired by <a href="http://www.todotxt.com/">todo.txt</a> and <a href="https://github.com/samg/timetrap">Timetrap</a>.</p>
+
+<p>Allows you to do time tracking of what you are doing, and records it in a Markdown formatted text file.</p>
+
+<p>Using a simple text format allows you to with other text-based tools, like nvAlt, Dropbox, etc.</p>
+
+<p><strong>NOTE: This is still an experiment, but I've been using it constantly for quite a while now.</strong>  I would recommend that if you use this to track important things, you make sure to use Dropbox or something which gives you an easy way to roll back changes if something goes wrong with your log file.</p>
+
+<p>Goals:</p>
+
+<ul>
+<li>Most of the features of Timetrap, via commandline interface
+
+<ul>
+<li> Track time of tasks</li>
+<li> Organize tasks in projects</li>
+<li> Summarize time spent on different tasks, or by date</li>
+</ul>
+</li>
+<li>Simple text format with natural-language time/date</li>
+<li>Store my files in Dropbox, using nvAlt and Simplenote (iOS) to do any on-the-go changes.</li>
+<li>Learn some Ruby ;)</li>
+</ul><p><strong>NOTE: i've stopped using Simplenote synch, and there are some problems with nvAlt, notably that nvAlt can overwrite a change you made externally because it thinks it needs to synch something.</strong> This is a bummer, but i've only seen it happen a few times.  I'm still using nvAlt with doing.txt.</p>
+
+<h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>build</p>
+
+<pre><code>gem build doing.gemspec
+</code></pre>
+
+<p>install</p>
+
+<pre><code>gem install doing-0.0.1.gem
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Start work:</p>
+
+<pre><code>doing start My task
+</code></pre>
+
+<p>Add a note to the task:</p>
+
+<pre><code>doing add My note
+</code></pre>
+
+<p>Finish work:</p>
+
+<pre><code>doing done
+</code></pre>
+
+<p>View tasks and durations (this is the default if you don't specify a subcommand):</p>
+
+<pre><code>doing display
+</code></pre>
+
+<p>Edit the text file using <code>$EDITOR</code>:</p>
+
+<pre><code>doing edit
+</code></pre>
+
+<h2>
+<a name="projects" class="anchor" href="#projects"><span class="octicon octicon-link"></span></a>Projects</h2>
+
+<p>Use a <code>+word</code> in a task to indicate projects:</p>
+
+<pre><code>doing start +projectA get started
+</code></pre>
+
+<p>You can use that project to filter tasks when listing.</p>
+
+<h2>
+<a name="time" class="anchor" href="#time"><span class="octicon octicon-link"></span></a><a href="https://github.com/time" class="user-mention">@time</a>
+</h2>
+
+<p>Use <code>@time</code> to start/stop a task at a certain time.</p>
+
+<pre><code>doing start +projectA starting @8am
+
+doing done @12pm
+</code></pre>
+
+<p>If you need to indicate a different day, I usually use <code>@year-mm-dd,time</code></p>
+
+<pre><code>doing done @2013-11-14,6pm
+</code></pre>
+
+<p>TODO: <a href="https://github.com/time" class="user-mention">@time</a> should allow spaces</p>
+
+<h2>
+<a name="taking-notes" class="anchor" href="#taking-notes"><span class="octicon octicon-link"></span></a>Taking notes</h2>
+
+<p>Add notes to the current task using <code>add</code>, <code>append</code> or <code>log</code>:</p>
+
+<pre><code>doing log currently yak shaving.
+</code></pre>
+
+<p>This will simply add a sub header with the date and time, and include your text.  Since it is under the h1 for the task, it will be included when you display notes for this task.</p>
+
+<p>All notes will accrue under the same task heading, so if you keep adding notes while working on the same task name, you can view all your notes for that task using:</p>
+
+<pre><code>doing status
+</code></pre>
+
+<h2>
+<a name="resume" class="anchor" href="#resume"><span class="octicon octicon-link"></span></a>resume</h2>
+
+<p>Resume the last task:</p>
+
+<pre><code>doing resume
+</code></pre>
+
+<p>TODO: should support <a href="https://github.com/time" class="user-mention">@time</a></p>
+
+<h2>
+<a name="split" class="anchor" href="#split"><span class="octicon octicon-link"></span></a>split</h2>
+
+<p>End the current task and start a new task.</p>
+
+<pre><code>doing split laundry @9am
+</code></pre>
+
+<p>Without specifying <code>@time</code>, uses the current time.</p>
+
+<h2>
+<a name="format" class="anchor" href="#format"><span class="octicon octicon-link"></span></a>Format</h2>
+
+<p>The default file is <code>~/.doing.txt</code>, and the format is Markdown, borrowing some semantics from <a href="http://www.johnmacfarlane.net/pandoc/README.html#definition-lists">Pandoc</a>'s Definition Lists.  Definition
+Lists are used to attach metadata to the task, including the start and end times, but you can
+use them for any metadata (tags, etc).  The only caveat is that Doing will move all definition
+list items to be above any other text content, so treat them only as metadata.</p>
+
+<pre><code># A Header defines a task
+
+Start
+:  April 7 2013, 12pm
+End
+:  1:30pm
+Data Key
+:  Data value
+
+Any normal text within a header section is considered "notes" for the task.
+
+Start and End times for the task can be defined simply by declaring the start/end
+definitions.
+</code></pre>
+
+<p>Synonyms for "Start" and "End" are: "begin","time","at" and "finish[ed]","complete[d]","done" respectively.</p>
+
+<h2>
+<a name="display-formats" class="anchor" href="#display-formats"><span class="octicon octicon-link"></span></a>Display formats</h2>
+
+<p>Doing writes the data file in the Markdown format, and displays the entries on the commandline in a table format inspired by Timetrap.</p>
+
+<p>You can view a summary of the current day by doing:</p>
+
+<pre><code>doing day
+</code></pre>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<ul>
+<li>√ Use the metadata support for searching, tagging, etc.
+
+<ul>
+<li>use <code>doing filter/find [text]</code> to filter tasks with that text</li>
+<li>use +project to filter the project</li>
+<li>use <a href="https://github.com/time" class="user-mention">@time</a> to filter tasks after the given time</li>
+</ul>
+</li>
+<li>√ Edit entries via commandline
+
+<ul>
+<li>use <code>doing edit vi</code> to edit the file with vi</li>
+</ul>
+</li>
+<li>dynamically load formatters</li>
+<li>√ CLI opts, so that we can do "--at time" 
+
+<ul>
+<li>use <code>@time</code> syntax</li>
+</ul>
+</li>
+<li>Run a local webapp that can edit/display the time entries?</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
