@@ -121,13 +121,13 @@ class Doing
         #print "tasks: %d" % @tasks.size
         case format
         when 'markdown'
-            print Formatters::Markdown.new(tasks).output
+            print Formatters::Markdown.new(tasks).output.join('')
         when 'status'
-            print Formatters::Status.new(tasks).output
+            print Formatters::Status.new(tasks).output.join('')
         when 'day'
-            print Formatters::Day.new(tasks).output
+            print Formatters::Day.new(tasks).output.join('')
         else
-            print Formatters::Table.new(tasks).output
+            print Formatters::Table.new(tasks).output.join('')
         end
     end
     def write
@@ -135,7 +135,7 @@ class Doing
     end
     def writeTo(tasks,file)
         File.open(file, "w") { |io|  
-            io.write Formatters::Markdown.new(tasks).output
+            io.write Formatters::Markdown.new(tasks).output.join('')
         }
     end
     def parseTitle(title)
