@@ -200,9 +200,9 @@ class Doing
         }.find_all{ |e|
            title.nil? || title=="" || e.title=~/#{title}/
         }.find_all{ |e|
-           before.nil? || ( ( before <=> e.end ) > 0 )
+           before.nil? || !e.end.nil? && ( ( before <=> e.end ) > 0 )
         }.find_all{ |e|
-           after.nil? || ( ( after <=> e.end ) <= 0 )
+           after.nil? || e.end.nil? || ( ( after <=> e.end ) <= 0 )
         }
         return tasks
     end
