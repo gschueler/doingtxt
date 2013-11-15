@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.summary = 'doing is todo.txt for time tracking'
   s.authors = ["Greg Schueler"]
   s.email = 'greg.schueler@gmail.com'
-  s.homepage = 'https://github.com/gschueler/nom'
+  s.homepage = 'http://gschueler.github.io/doingtxt/'
   s.add_dependency('chronic', '>= 0.9.1')
 
   s.files = [
