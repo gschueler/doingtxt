@@ -139,13 +139,4 @@ You can view a summary of the current day by doing:
 
 ## Todo
 
-* √ Use the metadata support for searching, tagging, etc.
-    * use `doing filter/find [text]` to filter tasks with that text
-    * use +project to filter the project
-    * use @time to filter tasks after the given time
-* √ Edit entries via commandline
-  * use `doing edit vi` to edit the file with vi
-* dynamically load formatters
-* √ CLI opts, so that we can do "--at time" 
-  * use `@time` syntax
-* Run a local webapp that can edit/display the time entries?
+see file [todo.txt](https://github.com/gschueler/doingtxt/blob/master/todo.txt)

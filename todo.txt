@@ -1,4 +1,8 @@
 - [x] update "append", add date to header
 - [x] add "filter" command, to reduce list by project 
 - [x] filter should partial match title, and date start
-- [ ] filter should show pertinent summary
+- [x] filter should show pertinent summary
+- [ ] dynamically load formatters
+- [ ] local webapp to display/edit contents?
+- [ ] something else for config file format, instead of doing.txt format?
+- [ ] publish actual ruby gem
