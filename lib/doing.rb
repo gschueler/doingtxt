@@ -134,7 +134,7 @@ class Doing
         self.writeTo(@tasks,@file)
     end
     def writeTo(tasks,file)
-        File.open(file, "w") { |io|  
+        File.open(file, "w") { |io|
             io.write Formatters::Markdown.new(tasks).output.join('')
         }
     end
@@ -166,7 +166,7 @@ class Doing
         parsed[:meta].each do |k,v|
             task.addMeta(k,v)
         end
-        
+
         # check if current task is open
         if tasks.size > 0 && !tasks[-1].end
             print "Already doing something: #{tasks[-1].title}\n"
@@ -230,7 +230,7 @@ class Doing
 
     #
     # Add a metadata value to the last entry
-    # 
+    #
     def addMeta(key,value,index=-1)
         task=@tasks.size ? @tasks[index] : nil
         if !task

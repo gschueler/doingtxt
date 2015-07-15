@@ -16,7 +16,7 @@ module Doing
             # write new config file if it doesn't exist
             config=Doing.new(@@config_file) if File.exist?(@@config_file)
             if !File.exist?(@@config_file)
-                File.open(@@config_file, "w") { |io|  
+                File.open(@@config_file, "w") { |io|
                 }
                 config=Doing.new(@@config_file)
                 config.startTask("Configuration")
@@ -27,7 +27,7 @@ module Doing
         def self.sheet(file)
             if !File.exist?(file)
                 print "Starting new file: #{file}\n"
-                File.open(file, "w") { |io|  
+                File.open(file, "w") { |io|
                 }
             end
             Doing.new(file)
@@ -35,7 +35,7 @@ module Doing
         def self.parseMetaArgs
             vals = {}
             key=nil
-            ARGV[1...ARGV.size].each { |arg| 
+            ARGV[1...ARGV.size].each { |arg|
                 s = StringScanner.new(arg)
                 if !key && em=s.scan(/^(.+?)[=:](.+)$/)
                     vals[s[1]]=s[2]
@@ -105,13 +105,13 @@ module Doing
                 when /^m(eta)?$/
                     # Add metadata to the latest entry
                     meta=self.parseMetaArgs
-                    meta.each_key { |key|  
-                        if !doing.addMeta(key,meta[key]) 
+                    meta.each_key { |key|
+                        if !doing.addMeta(key,meta[key])
                             break
                         end
                     }
                     doing.display 'status'
-                    
+
                 when /^r(esume)?$/
                     # resume previous task if finished
                     title=ARGV[1...ARGV.size].join(" ")
@@ -155,13 +155,13 @@ module Doing
                     # switch to another file, or 'default' to mean default
                     key=ARGV[1]
                     key="" if key=="default"
-                    config.addMeta('file_key',key) 
+                    config.addMeta('file_key',key)
                     print "Switched to Worksheet: %s\n" % (key!="" ? key : "Default")
                 when /^c(onfig)?$/
-                    
+
                     meta=self.parseMetaArgs
-                    meta.each_key { |key|  
-                        if !config.addMeta(key,meta[key]) 
+                    meta.each_key { |key|
+                        if !config.addMeta(key,meta[key])
                             break
                         end
                     }
@@ -177,24 +177,24 @@ module Doing
                         print "Unable to determine archive date from: %s\n" % dname
                         return
                     end
-                    
+
                     fname=dname
                     if file_key
                         fname = "#{file_key}.#{dname}"
                     end
                     newfile=File.join(file_dir, "#{@@default_file_name}.#{fname}.txt")
-                    
+
                     tasks=doing.filterTasks(before)
                     if tasks.size
-                        
+
                         doing.writeTo(tasks,newfile)
-                        
+
                         print "Archiving tasks before %s\n" % [before]
                         print "Archived %s tasks to: %s\n" % [tasks.size, newfile]
 
                         #truncate current taskset
                         doing.filterTo(nil,before)
-                        
+
                         print "Truncated worksheet %s\n" % [file_key]
                     else
                         print "No tasks matching filter: %s\n" % [dname]
