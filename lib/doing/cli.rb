@@ -114,11 +114,13 @@ module Doing
                     
                 when /^r(esume)?$/
                     # resume previous task if finished
-                    index=-1
-                    if ARGV.size > 1
-                        index = ARGV[1].to_i
+                    title=ARGV[1...ARGV.size].join(" ")
+                    after=nil
+                    parsed=doing.parseTitle(title) #look for @time
+                    if parsed[:meta]['start_time']
+                        after=parsed[:meta]['start_time']
                     end
-                    doing.resumeTask index
+                    doing.resumeTask(-1,after)
                     doing.display 'status'
                 when /^split$/
                     # finish previous task and start a new one right now

@@ -243,15 +243,14 @@ class Doing
     end
     #
     # Resume a task by starting a new task with the title of a previous one
-    # 
-    def resumeTask(index=-1)
+    #
+    def resumeTask(index=-1,attime=nil)
         task=@tasks.size ? @tasks[index] : nil
         if !task
             print "No task found\n"
             return false
         end
-        self.startTask(task.title)
+        self.startTask(task.title,attime)
     end
 end
 end
-
