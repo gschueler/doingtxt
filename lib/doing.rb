@@ -250,7 +250,7 @@ class Doing
             print "No task found\n"
             return false
         end
-        self.startTask(task.title,attime)
+        self.startTask(task.title,attime ? attime.to_s : nil)
     end
 end
 end
